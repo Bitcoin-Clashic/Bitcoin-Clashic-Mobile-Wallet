@@ -3,7 +3,7 @@
 var coins = require('./coins')
 
 module.exports = {
-  bitcoincash: {
+  bitcoinclashic: {
     messagePrefix: '\x18Bitcoin Signed Message:\n',
     bech32: 'bc',
     bip32: {
@@ -13,7 +13,7 @@ module.exports = {
     pubKeyHash: 0x00,
     scriptHash: 0x05,
     wif: 0x80,
-    coin: coins.BCH,
+    coin: coins.BCHC,
     forkId: 0x20
   },
 }
