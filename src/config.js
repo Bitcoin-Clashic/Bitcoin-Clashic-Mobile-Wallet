@@ -4,7 +4,7 @@ export default config = {
   gradient: ['rgb(234, 120, 20)', 'rgb(253, 148, 10)'],
   name: 'Bitcoin Clashic',
   ticker: 'BCHC',
-  network: networks.bitcoincash,
+  network: networks.bitcoinclashic,
   coingecho_name: 'title-network'
 }
 

@@ -78,9 +78,10 @@ function buildTransaction(params, inputs, cb){
 function signTransaction(params, inputs, builder, cb){
   try {
     var key = lib.ECPair.fromWIF(params.priv, config.network);
+    var hashType = lib.Transaction.SIGHASH_ALL | lib.Transaction.SIGHASH_BITCOINCASHBIP143
     // applying signature
     try {
-      inputs.forEach((v, i) => {builder.sign(i, key, null, lib.Transaction.SIGHASH_BITCOINCASHBIP143, inputs[i].satoshis)})
+      inputs.forEach((v, i) => {builder.sign(i, key, null, hashType, inputs[i].satoshis)})
     } catch (err) {
       console.log('1 ' + err)
     }
@@ -93,7 +94,7 @@ function signTransaction(params, inputs, builder, cb){
 
 function broadcastTransaction(txhex, cb){
   console.log(txhex)
- axios.get(`https://insight.clashic.cash/api/tx/send`, {rawtx: txhex}).then(function (response) {
+ axios.post(`https://insight.clashic.cash/api/tx/send`, {rawtx: txhex}).then(function (response) {
    console.log(response.data)
     if (response.data.error){
       cb({status: 2, message: 'problem broadcasting transaction, if you have just made a transaction that is currently unconfirmed please try again in a few minutes'})

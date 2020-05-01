@@ -27,7 +27,7 @@ export default class Wallet extends Component {
             isActivity: true,
             isReceive: false,
             isSend : false,
-            fee: 0.0004068,
+            fee: 0.0002034,
             address: '',
             amount: 0,
             spinner: false,
@@ -44,19 +44,19 @@ export default class Wallet extends Component {
 
     changeFee = (type) => {
         if (type == 'economy'){
-            this.setState({feeButtons: {left: 'white', middle: 'grey', right: 'grey'}, fee: 0.0004068})
+            this.setState({feeButtons: {left: 'white', middle: 'grey', right: 'grey'}, fee: 0.0002034})
             if ((Number(this.state.amount) + Number(this.state.fee)).toFixed(4) == this.props.balanceData.balance){
-                this.setState({amount: String(Number(this.props.balanceData.balance - 0.0004068).toFixed(8))})
+                this.setState({amount: String(Number(this.props.balanceData.balance - 0.0002034).toFixed(8))})
             }
         } else if (type == 'standard'){
-            this.setState({feeButtons: {left: 'grey', middle: 'white', right: 'grey'}, fee: 0.0010068})
+            this.setState({feeButtons: {left: 'grey', middle: 'white', right: 'grey'}, fee: 0.0005034})
             if ((Number(this.state.amount) + Number(this.state.fee)).toFixed(4) == this.props.balanceData.balance){
-                this.setState({amount: String(Number(this.props.balanceData.balance - 0.0010068).toFixed(8))})
+                this.setState({amount: String(Number(this.props.balanceData.balance - 0.0005034).toFixed(8))})
             }
         } else if (type == 'fast'){
-            this.setState({feeButtons: {left: 'grey', middle: 'grey', right: 'white'}, fee: 0.0015068})
+            this.setState({feeButtons: {left: 'grey', middle: 'grey', right: 'white'}, fee: 0.0007534})
             if ((Number(this.state.amount) + Number(this.state.fee)).toFixed(4) == this.props.balanceData.balance){
-                this.setState({amount: String(Number(this.props.balanceData.balance - 0.0015068).toFixed(8))})
+                this.setState({amount: String(Number(this.props.balanceData.balance - 0.0007534).toFixed(8))})
             }
         }
     }
