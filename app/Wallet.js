@@ -397,10 +397,10 @@ export default class Wallet extends Component {
               <Card height={this.state.privateKeyModalHeight} top={50} width={width - 80}>
                 <Text bold size={20} top={15}>ENTER PIN</Text>
                 <TextInput secureTextEntry onChangeText={(value) => this.setState({pin: value})} keyboardType='numeric' style={styles.pinInput} value={this.state.pin}/>
-                <TouchableOpacity onPress={this.closePrivateKeyModal} style={{marginTop: 15}}>
-                  <Text color='grey'>CLOSE</Text>
+                <TouchableOpacity onPress={this.closePrivateKeyModal} style={styles.close}>
+                  <Text bold size={20} color='white'>CLOSE</Text>
                 </TouchableOpacity>
-                <GradientButton fontSize={15} onPress={this.state.viewPrivateKey ? this.copyPrivateKey : this.backup} top={20} title={this.state.privateKeyModalButtonTitle} width={width - 200} height={40}/>
+                <GradientButton fontSize={15} onPress={this.state.viewPrivateKey ? this.copyPrivateKey : this.backup} top={30} title={this.state.privateKeyModalButtonTitle} width={width - 200} height={40}/>
                 {
                   this.state.viewPrivateKey ? (
                     <View style={{width: '100%', alignItems: 'center'}}>
@@ -408,7 +408,7 @@ export default class Wallet extends Component {
                       <IOS_QR 
                           style={{marginTop: 20}}
                           size={width - 200} 
-                          value={this.props.keyPair.address}
+                          value={this.props.keyPair.privatekey}
                           foregroundColor='black'
                           backgroundColor='#363636'
                       />
@@ -535,5 +535,9 @@ const styles = StyleSheet.create({
       marginTop: 10,
       borderRadius: 5,
       textAlign: 'center'
+    },
+    close: {
+      position: 'absolute',
+      bottom: 15
     }
 });
