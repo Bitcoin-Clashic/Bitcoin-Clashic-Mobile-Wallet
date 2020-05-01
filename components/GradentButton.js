@@ -28,7 +28,7 @@ export default class GradentButton extends Component {
             style={[this.props.style, {
               width: this.props.width ? this.props.width : 280,
               height: this.props.height ? this.props.height : 50,
-              borderRadius: 100,
+              borderRadius: this.props.radius || 100,
               alignItems: "center",
               justifyContent: "center",
               marginTop: this.props.top ? this.props.top : 0,
