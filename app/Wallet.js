@@ -117,7 +117,7 @@ export default class Wallet extends Component {
     expand(i){
         let hl = this.props.balanceData.heightList
         if (hl[i] == 65) {
-           hl[i] = 120
+           hl[i] = 150
            this.setState({heightList: hl})
         } else {
             hl[i] = 65
@@ -219,10 +219,18 @@ export default class Wallet extends Component {
                                         <View style={styles.txIconCard}>
                                           <Image style={styles.txIcon} source={item.vin[0].addr == this.props.keyPair.address ? require('../assets/sent.png') : require('../assets/receive.png')}/>
                                         </View>
-                                        <View style={styles.time}>
-                                          <Text bold>{moment(item.time * 1000).format("DD/MM/YYYY")}</Text>
-                                          <Text>{moment(item.time * 1000).format("HH:mm")}</Text>
-                                        </View>
+                                        {
+                                            item.confirmations == 0 ? (
+                                                <View style={styles.pending}>
+                                                  <Text color="#e44c3c" bold>Pending ...</Text>
+                                                </View>
+                                            ) : (
+                                              <View style={styles.time}>
+                                                <Text bold>{moment(item.time * 1000).format("DD/MM/YYYY")}</Text>
+                                                <Text>{moment(item.time * 1000).format("HH:mm")}</Text>
+                                            </View>
+                                            )
+                                        }
                                         <View style={styles.txAmountWrapper}>
                                           <Text size={20}>{Number(this.insight_explorer_transaction_value(item.vout, item.vin[0].addr == this.props.keyPair.address)).toFixed(4)}</Text>
                                           <Text size={10}>{config.ticker}</Text>
@@ -238,12 +246,16 @@ export default class Wallet extends Component {
                                                       <Text size={width / 27}>{item.txid.slice(0, (item.vin[0].addr == this.props.keyPair.address ? item.vout[0].scriptPubKey.addresses[0].length : item.vin[0].addr.length - 3))}...</Text>
                                                   </TouchableOpacity>
                                                   <TouchableOpacity onPress={() => {
-                                                      Clipboard.setString(item.txid)
+                                                      Clipboard.setString(item.vin[0].addr == this.props.keyPair.address ? item.vout[0].scriptPubKey.addresses[0] : item.vin[0].addr)
                                                       Alert.alert('Copied to clipboard')
                                                   }} style={{flexDirection: 'row'}}>
                                                       <Text size={width / 27} bold>{item.vin[0].addr == this.props.keyPair.address ? 'To: ' : 'From:'} </Text>
                                                        <Text size={width / 27}>{item.vin[0].addr == this.props.keyPair.address ? item.vout[0].scriptPubKey.addresses[0] : item.vin[0].addr}</Text>
                                                   </TouchableOpacity>
+                                                  <View style={{flexDirection: 'row', marginTop: 7}}>
+                                                    <Text size={width / 27} bold>Confirmations: </Text>
+                                                    <Text size={width / 27}>{item.confirmations}</Text>
+                                                  </View>
                                                 </View>
                                             )
                                         }
@@ -428,5 +440,10 @@ const styles = StyleSheet.create({
           flex: 1,
           alignItems: 'center',
           justifyContent: 'center'
-      }
+      },
+      pending: {
+        marginLeft: 100,
+        height: 65,
+        justifyContent: 'center'
+    },
 });
