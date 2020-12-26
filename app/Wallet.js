@@ -1,11 +1,10 @@
 import React, { Component } from 'react';
-import { View, StyleSheet, Dimensions, Animated, TouchableOpacity, ScrollView, KeyboardAvoidingView, TextInput, Image, Clipboard, Alert, Platform } from 'react-native';
+import { View, StyleSheet, Dimensions, Animated, TouchableOpacity, ScrollView, KeyboardAvoidingView, TextInput, Image, Clipboard, Alert, Platform, Keyboard } from 'react-native';
 import Card from '../components/Card'
 import Text from '../components/Text'
 import WalletHeader from '../components/WalletHeader'
 import Row from '../components/Row'
 import LineGradient from '../components/LineGradient'
-//import Android_QR from 'react-qr-code';
 import IOS_QR from 'react-native-qr-generator'
 import DeviceInfo from 'react-native-device-info'
 import GradientButton from '../components/GradentButton'
@@ -15,6 +14,8 @@ import QRCodeScanner from 'react-native-qrcode-scanner';
 import Modal from 'react-native-modal'
 import config from '../src/config'
 import moment from 'moment'
+import RNSecureKeyStore, {ACCESSIBLE} from "react-native-secure-key-store";
+
 
 const width = Dimensions.get('window').width
 const height = Dimensions.get('window').height
@@ -39,6 +40,11 @@ export default class Wallet extends Component {
             qrModal: false,
             errorIndex: '',
             sucessModal: false,
+            privateKey: false,
+            pin: '',
+            privateKeyModalHeight: new Animated.Value(200),
+            viewPrivateKey: false,
+            privateKeyModalButtonTitle: 'BACKUP'
         }
     }
 
@@ -117,7 +123,7 @@ export default class Wallet extends Component {
     expand(i){
         let hl = this.props.balanceData.heightList
         if (hl[i] == 65) {
-           hl[i] = 120
+           hl[i] = 150
            this.setState({heightList: hl})
         } else {
             hl[i] = 65
@@ -157,6 +163,48 @@ export default class Wallet extends Component {
             return vout[vout.findIndex((x) => x.scriptPubKey.addresses[0] === voutAddress)].value
           }
         }
+      }
+
+      backup = () => {
+        RNSecureKeyStore.get("userData").then((res) => {
+          if (this.state.pin == JSON.parse(res).pin){
+            Keyboard.dismiss()
+            Animated.timing(this.state.privateKeyModalHeight, {
+              toValue: 500,
+              timing: 1000
+            }).start()
+            let self = this
+            setTimeout(() => {
+              self.setState({viewPrivateKey: true, privateKeyModalButtonTitle: 'COPY TO CLIPBOARD'})
+            }, 1000);
+          } else {
+            Alert.alert('Incorrect pin')
+          }
+        }, (err) => {
+            Alert.alert('Error getting pin')
+        })
+      }
+
+      closePrivateKeyModal = () => {
+        console.log(Number(this.state.privateKeyModalHeight))
+        if (this.state.viewPrivateKey) {
+          this.setState({viewPrivateKey: false, privateKeyModalButtonTitle: 'BACKUP'})
+          let self = this
+          Animated.timing(this.state.privateKeyModalHeight, {
+            toValue: 200,
+            timing: 1000
+          }).start()
+          setTimeout(() => {
+            self.setState({privateKey: false})
+          }, 1000);
+        } else {
+          this.setState({privateKey: false})
+        }
+      }
+
+      copyPrivateKey = () => {
+        Clipboard.setString(this.props.keyPair.privatekey)
+        Alert.alert('Copied')
       }
 
   render() {
@@ -219,10 +267,18 @@ export default class Wallet extends Component {
                                         <View style={styles.txIconCard}>
                                           <Image style={styles.txIcon} source={item.vin[0].addr == this.props.keyPair.address ? require('../assets/sent.png') : require('../assets/receive.png')}/>
                                         </View>
-                                        <View style={styles.time}>
-                                          <Text bold>{moment(item.time * 1000).format("DD/MM/YYYY")}</Text>
-                                          <Text>{moment(item.time * 1000).format("HH:mm")}</Text>
-                                        </View>
+                                        {
+                                            item.confirmations == 0 ? (
+                                                <View style={styles.pending}>
+                                                  <Text color="#e44c3c" bold>Pending ...</Text>
+                                                </View>
+                                            ) : (
+                                              <View style={styles.time}>
+                                                <Text bold>{moment(item.time * 1000).format("DD/MM/YYYY")}</Text>
+                                                <Text>{moment(item.time * 1000).format("HH:mm")}</Text>
+                                            </View>
+                                            )
+                                        }
                                         <View style={styles.txAmountWrapper}>
                                           <Text size={20}>{Number(this.insight_explorer_transaction_value(item.vout, item.vin[0].addr == this.props.keyPair.address)).toFixed(4)}</Text>
                                           <Text size={10}>{config.ticker}</Text>
@@ -238,12 +294,16 @@ export default class Wallet extends Component {
                                                       <Text size={width / 27}>{item.txid.slice(0, (item.vin[0].addr == this.props.keyPair.address ? item.vout[0].scriptPubKey.addresses[0].length : item.vin[0].addr.length - 3))}...</Text>
                                                   </TouchableOpacity>
                                                   <TouchableOpacity onPress={() => {
-                                                      Clipboard.setString(item.txid)
+                                                      Clipboard.setString(item.vin[0].addr == this.props.keyPair.address ? item.vout[0].scriptPubKey.addresses[0] : item.vin[0].addr)
                                                       Alert.alert('Copied to clipboard')
                                                   }} style={{flexDirection: 'row'}}>
                                                       <Text size={width / 27} bold>{item.vin[0].addr == this.props.keyPair.address ? 'To: ' : 'From:'} </Text>
                                                        <Text size={width / 27}>{item.vin[0].addr == this.props.keyPair.address ? item.vout[0].scriptPubKey.addresses[0] : item.vin[0].addr}</Text>
                                                   </TouchableOpacity>
+                                                  <View style={{flexDirection: 'row', marginTop: 7}}>
+                                                    <Text size={width / 27} bold>Confirmations: </Text>
+                                                    <Text size={width / 27}>{item.confirmations}</Text>
+                                                  </View>
                                                 </View>
                                             )
                                         }
@@ -276,6 +336,11 @@ export default class Wallet extends Component {
                               backgroundColor='#363636'
                           />
                   </Card>
+                  <TouchableOpacity onPress={() => this.setState({privateKey: true})}>
+                    <Card justifyCenter height={50} width={(width - 50) / 3} style={{marginLeft: (width - 50) / 1.5}} top={20}>
+                      <Text color='grey' bold>BACKUP</Text>
+                    </Card>
+                  </TouchableOpacity>
                   </View>
                     ) : this.state.isSend ? (
                         <View style={{width, alignItems: 'center'}}>
@@ -327,6 +392,30 @@ export default class Wallet extends Component {
                     <Image style={{width: 80, height: 80}} source={require('../assets/success.png')}/>
                     <Text bold top={20}>SUCCESS</Text>
                 </Card>
+            </Modal>
+            <Modal style={styles.privateKeyModal} isVisible={this.state.privateKey}>
+              <Card height={this.state.privateKeyModalHeight} top={50} width={width - 80}>
+                <Text bold size={20} top={15}>ENTER PIN</Text>
+                <TextInput secureTextEntry onChangeText={(value) => this.setState({pin: value})} keyboardType='numeric' style={styles.pinInput} value={this.state.pin}/>
+                <TouchableOpacity onPress={this.closePrivateKeyModal} style={styles.close}>
+                  <Text bold size={20} color='white'>CLOSE</Text>
+                </TouchableOpacity>
+                <GradientButton fontSize={15} onPress={this.state.viewPrivateKey ? this.copyPrivateKey : this.backup} top={30} title={this.state.privateKeyModalButtonTitle} width={width - 200} height={40}/>
+                {
+                  this.state.viewPrivateKey ? (
+                    <View style={{width: '100%', alignItems: 'center'}}>
+                      <Text bold size={15} top={20}>private key:</Text>
+                      <IOS_QR 
+                          style={{marginTop: 20}}
+                          size={width - 200} 
+                          value={this.props.keyPair.privatekey}
+                          foregroundColor='black'
+                          backgroundColor='#363636'
+                      />
+                    </View>
+                  ) : null
+                }
+              </Card>
             </Modal>
         </View>
     )
@@ -428,5 +517,27 @@ const styles = StyleSheet.create({
           flex: 1,
           alignItems: 'center',
           justifyContent: 'center'
-      }
+      },
+      pending: {
+        marginLeft: 100,
+        marginTop: 23,
+        justifyContent: 'center'
+    },
+    privateKeyModal: {
+      alignItems: 'center',
+      justifyContent: 'flex-start'
+    },
+    pinInput: {
+      borderWidth: 2,
+      borderColor: 'grey',
+      width: width - 200,
+      height: 30,
+      marginTop: 10,
+      borderRadius: 5,
+      textAlign: 'center'
+    },
+    close: {
+      position: 'absolute',
+      bottom: 15
+    }
 });
