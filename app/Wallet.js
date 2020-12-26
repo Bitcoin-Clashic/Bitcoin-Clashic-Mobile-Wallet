@@ -175,7 +175,7 @@ export default class Wallet extends Component {
             }).start()
             let self = this
             setTimeout(() => {
-              self.setState({viewPrivateKey: true, privateKeyModalButtonTitle: 'COPY TO CLIPBOARD'})
+              self.setState({viewPrivateKey: true, privateKeyModalButtonTitle: 'COPY KEY TO CLIPBOARD'})
             }, 1000);
           } else {
             Alert.alert('Incorrect pin')
@@ -333,7 +333,7 @@ export default class Wallet extends Component {
                               size={width - 80} 
                               value={this.props.keyPair.address}
                               foregroundColor='black'
-                              backgroundColor='#363636'
+                              backgroundColor='#8f8f8f'
                           />
                   </Card>
                   <TouchableOpacity onPress={() => this.setState({privateKey: true})}>
@@ -345,7 +345,7 @@ export default class Wallet extends Component {
                     ) : this.state.isSend ? (
                         <View style={{width, alignItems: 'center'}}>
                             <Card style={{flexDirection: 'row'}} justifyCenter top={50} width={300} height={50}>
-                              <TextInput placeholder='Address' placeholderTextColor="grey" style={styles.input} onChangeText={(address) => this.setState({address})} value={this.state.address}/>
+                              <TextInput placeholder='Address' placeholderTextColor="grey" style={styles.input} color="black" onChangeText={(address) => this.setState({address})} value={this.state.address}/>
                               <TouchableOpacity onPress={() => this.setState({qrModal: true})} style={{position: 'absolute', right: 15}}>
                                 <Image style={styles.qr} source={require('../assets/qr.png')}/>
                               </TouchableOpacity>
@@ -354,9 +354,9 @@ export default class Wallet extends Component {
                               </TouchableOpacity>
                             </Card>
                             <Card style={{flexDirection: 'row'}} justifyCenter top={30} width={300} height={50}>
-                              <TextInput keyboardType='numeric' placeholder='Amount' placeholderTextColor="grey" style={styles.input} onChangeText={(amount) => this.setState({amount: amount.replace(/,/, '.')})} value={this.state.amount}/>
+                              <TextInput keyboardType='numeric' placeholder='Amount' placeholderTextColor="grey" style={styles.input} color="black" onChangeText={(amount) => this.setState({amount: amount.replace(/,/, '.')})} value={this.state.amount}/>
                               <TouchableOpacity onPress={this.max} style={[{borderColor: config.color}, styles.sendAll]}>
-                                  <Text bold size={10}>MAX</Text>
+                                  <Text bold size={10} color="black">MAX</Text>
                               </TouchableOpacity>
                             </Card>
                             <View style={{flexDirection: 'row', marginTop: 25}}>
@@ -393,24 +393,24 @@ export default class Wallet extends Component {
                     <Text bold top={20}>SUCCESS</Text>
                 </Card>
             </Modal>
-            <Modal style={styles.privateKeyModal} isVisible={this.state.privateKey}>
+            <Modal style={styles.privateKeyModal} isVisible={this.state.privateKey} color="dark grey">
               <Card height={this.state.privateKeyModalHeight} top={50} width={width - 80}>
-                <Text bold size={20} top={15}>ENTER PIN</Text>
+                <Text bold size={20} top={15} color="black">ENTER PIN</Text>
                 <TextInput secureTextEntry onChangeText={(value) => this.setState({pin: value})} keyboardType='numeric' style={styles.pinInput} value={this.state.pin}/>
                 <TouchableOpacity onPress={this.closePrivateKeyModal} style={styles.close}>
-                  <Text bold size={20} color='white'>CLOSE</Text>
+                  <Text bold size={20} color='grey'>CLOSE</Text>
                 </TouchableOpacity>
                 <GradientButton fontSize={15} onPress={this.state.viewPrivateKey ? this.copyPrivateKey : this.backup} top={30} title={this.state.privateKeyModalButtonTitle} width={width - 200} height={40}/>
                 {
                   this.state.viewPrivateKey ? (
                     <View style={{width: '100%', alignItems: 'center'}}>
-                      <Text bold size={15} top={20}>private key:</Text>
+                      <Text bold size={15} top={20} color="black">SCAN PRIVATE KEY:</Text>
                       <IOS_QR 
                           style={{marginTop: 20}}
                           size={width - 200} 
                           value={this.props.keyPair.privatekey}
                           foregroundColor='black'
-                          backgroundColor='#363636'
+                          backgroundColor='#8f8f8f'
                       />
                     </View>
                   ) : null

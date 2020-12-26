@@ -28,12 +28,12 @@ export default class CoinCard extends Component {
           <Card top={DeviceInfo.hasNotch() == 1 ? 50 : 25} width={280} height={80} justifyCenter style={{alignItems: 'flex-start'}}>
             <Image style={styles.logo} source={require('../assets/icon.png')}/>
             <View style={styles.balanceWrapper}>
-              <Text size={13} bold>{this.nFormatter(this.props.balanceData.balance)} {config.ticker}</Text>
-              <Text size={12}>${this.props.balanceData.fiatBalance}</Text>
+              <Text size={13} bold color="black">{this.nFormatter(this.props.balanceData.balance)} {config.ticker}</Text>
+              <Text size={12} color="black">${this.props.balanceData.fiatBalance}</Text>
             </View>
             <View style={styles.infoWrapper}>
-              <Text bold>{config.name}</Text>
-              <Text size={12}>{'$' + this.props.balanceData.price || 'Network Error'}</Text>
+              <Text bold color="black">{config.name}</Text>
+              <Text size={12} color="black">{'$' + this.props.balanceData.price || 'Network Error'}</Text>
             </View>
           </Card>
             {this.props.children}
