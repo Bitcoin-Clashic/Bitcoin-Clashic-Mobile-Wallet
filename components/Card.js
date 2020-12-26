@@ -8,7 +8,7 @@ export default class Card extends Component {
             width: this.props.width ? this.props.width : 100,
             height: this.props.height ? this.props.height : 100,
             borderRadius: this.props.radius ? this.props.radius : 10,
-            backgroundColor: this.props.color ? this.props.color : '#363636',
+            backgroundColor: this.props.color ? this.props.color : '#ebebeb',
             alignItems: 'center',
             marginTop: this.props.top ? this.props.top : 0,
             marginBottom: this.props.bottom ? this.props.bottom : 0,

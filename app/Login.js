@@ -33,7 +33,7 @@ export default class Login extends Component {
       password: '',
       cPassword: '',
       pin: 'PIN',
-      title: 'USER CREDENTIALS',
+      title: 'GENERATE PRIVATE KEY',
       userData: {pin: '', key: ''}
     }
   }
@@ -89,7 +89,7 @@ export default class Login extends Component {
               this.state.userExists ? (
                   <View style={{width, alignItems: 'center'}}>
                     <Card top={30} justifyCenter width={width / 2.5} height={45}>
-                       <Text bold>{this.state.pin}</Text>
+                       <Text bold color="black">{this.state.pin}</Text>
                     </Card>
                     <KeyPad
                       onChange={(value) => this.setState({pin: value})}
@@ -102,7 +102,7 @@ export default class Login extends Component {
                 <ScrollView style={styles.mainContainer}>
                   <View style={{flex: 1, flexDirection: 'row'}}>
                   <Animated.View style={[styles.inner, {transform: [{translateX: this.state.inputsPosition}], marginTop: height / 12}]}>
-                    <Card justifyCenter width={width / 1.3} height={60}>
+                    <Card justifyCenter width={width / 1.3} height={50}>
                         <TextInput 
                           placeholder='Username' 
                           style={styles.input}
@@ -110,7 +110,7 @@ export default class Login extends Component {
                           onChangeText={(value) => this.setState({username: value})}
                         />
                     </Card>
-                    <Card top={30} justifyCenter width={width / 1.3} height={60}>
+                    <Card top={30} justifyCenter width={width / 1.3} height={50}>
                         <TextInput 
                           placeholder='Password' 
                           style={styles.input}
@@ -119,7 +119,7 @@ export default class Login extends Component {
                           onChangeText={(value) => this.setState({password: value})}
                         />
                     </Card>
-                    <Card top={30} justifyCenter width={width / 1.3} height={60}>
+                    <Card top={30} justifyCenter width={width / 1.3} height={50}>
                         <TextInput 
                           placeholder='Confirm Password' 
                           style={styles.input}
@@ -129,11 +129,11 @@ export default class Login extends Component {
                         />
                     </Card>
                     <GradientButton onPress={this.goToPin} width={width / 1.3} top={50} title='NEXT'/>
-                    <Text padding={20} center color="grey">Do not forget your username and password. These cannot be changed and you will need them in order to restore you funds.</Text>
+                    <Text padding={20} center color="red">Create a very unique username and password. Write it down and secure. These are used to generate a private key to restore funds at a later time.</Text>
                 </Animated.View>
                 <Animated.View style={[styles.inner, {transform: [{translateX: this.state.pinPosition}]}]}>
                     <Card top={30} justifyCenter width={width / 2.5} height={45}>
-                        <Text bold>{this.state.pin}</Text>
+                        <Text bold color="black">{this.state.pin}</Text>
                     </Card>
                     <KeyPad
                       onChange={(value) => this.setState({pin: value})}
@@ -154,7 +154,7 @@ export default class Login extends Component {
 
 const styles = StyleSheet.create({
     background: {
-        backgroundColor: '#222222', 
+        backgroundColor: '#555555', 
         width: width, 
         height: height,
         alignItems: 'center'
@@ -172,7 +172,7 @@ const styles = StyleSheet.create({
     input: {
         width: width / 1.4,
         height: 55,
-        color: 'white'
+        color: 'black'
     },
     pinCard: {
         position: 'absolute'
