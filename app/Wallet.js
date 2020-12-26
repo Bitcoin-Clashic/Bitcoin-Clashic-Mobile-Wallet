@@ -390,7 +390,7 @@ export default class Wallet extends Component {
             <Modal animationIn='fadeIn' animationOut='fadeOut' isVisible={this.state.sucessModal} style={styles.successModal} onBackdropPress={() => this.setState({sucessModal: false})}>
                 <Card height={180} width={150} justifyCenter>
                     <Image style={{width: 80, height: 80}} source={require('../assets/success.png')}/>
-                    <Text bold top={20}>SUCCESS</Text>
+                    <Text bold top={20} color="black">SUCCESSFULLY SENT</Text>
                 </Card>
             </Modal>
             <Modal style={styles.privateKeyModal} isVisible={this.state.privateKey} color="dark grey">
